@@ -20,6 +20,7 @@ RAW_FILENAME = 'image.jpg'
 
 class Config:
     def __init__(self):
+        self.previewing = False
         self.conf = ConfigParser.ConfigParser()
         conf_filename = os.path.join("./", 'photobooth.conf')
         self.conf.read(conf_filename)
@@ -77,6 +78,7 @@ class Photobooth:
 
 
     def takePicture(self):
+        self.previewing = True
         self.camera.start_preview()
         #camera.preview_alpha = 230
         self.camera.preview_window = (0, 0, WIDTH, HEIGHT)
@@ -92,6 +94,7 @@ class Photobooth:
         time.sleep(10)
         self.camera.remove_overlay(o)
 
+        self.previewing = False
         return snapshot
 
 
