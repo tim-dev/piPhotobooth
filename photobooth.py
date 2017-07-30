@@ -37,7 +37,6 @@ class Photobooth:
 
         ## the canvas will display the images
         self.canv = Canvas(root, width=WIDTH, height=HEIGHT)
-        self.canv.create_rectangle(0, 0, WIDTH, HEIGHT) #fill=TRANSCOLOUR, outline=TRANSCOLOUR
         self.canv.bind("<Button-1>", self.takePicture)
         self.canv.pack()
         self.previewImage()
@@ -52,7 +51,7 @@ class Photobooth:
 
     def previewImage(self):
         stream = BytesIO()
-        self.camera.capture(stream, format='jpeg')
+        self.camera.capture(stream, resize=(WIDTH, HEIGHT))
         # "Rewind" the stream to the beginning so we can read its content
         stream.seek(0)
         image = Image.open(stream)
@@ -76,7 +75,6 @@ class Photobooth:
                           0 + y / 2],
                          image=image_tk,
                          tags="image")
-        self.canv.update()
 
 
     def takePicture(self):
