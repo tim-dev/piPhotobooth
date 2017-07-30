@@ -8,13 +8,11 @@ import ConfigParser
 import os.path
 
 client = gdata.docs.service.DocsService()
-camera = picamera.PiCamera()
 
 # Constants
 WIDTH = 1366
 HEIGHT = 788
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
+SCALE = 1.25 ### was 2
 TRANSCOLOUR = ''
 RAW_FILENAME = 'image.jpg'
 
@@ -30,6 +28,84 @@ class Config:
 
 config = Config()
 
+class Photobooth:
+    def __init__(self, root):
+        self.camera = picamera.PiCamera()
+
+        ## the canvas will display the images
+        self.canv = Canvas(root, width=WIDTH, height=HEIGHT)
+        self.canv.create_rectangle(0, 0, WIDTH, HEIGHT) #fill=TRANSCOLOUR, outline=TRANSCOLOUR
+        self.canv.bind("<Button-1>", takePicture)
+        self.canv.pack()
+        self.previewImage()
+
+
+    def loop(self):
+        # Show a psuedo preview while the preview isn't going
+        while True:
+            if not self.previewing:
+                self.previewImage()
+                time.sleep(0.1)
+
+    def previewImage(self):
+        stream = BytesIO()
+        self.camera.capture(stream, format='jpeg')
+        # "Rewind" the stream to the beginning so we can read its content
+        stream.seek(0)
+        image = Image.open(stream)
+        self.displayImage(image)
+
+
+    def displayImage(self, im=None):
+        '''
+        display image im in GUI window
+        '''
+        x,y = im.size
+        x = int(x / SCALE)
+        y = int(y / SCALE)
+
+        im = im.resize((x,y));
+        image_tk = ImageTk.PhotoImage(im)
+
+        ## delete all canvas elements with "image" in the tag
+        self.canv.delete("image")
+        self.canv.create_image([(WIDTH + x) / 2 - x/2,
+                          0 + y / 2],
+                         image=image_tk,
+                         tags="image")
+
+
+    def takePicture(self):
+        self.camera.start_preview()
+        #camera.preview_alpha = 230
+        self.camera.preview_window = (0, 0, WIDTH, HEIGHT)
+        self.camera.preview_fullscreen = False
+
+        self.countdown()
+        camera.capture(RAW_FILENAME, resize=(WIDTH, HEIGHT))
+        snapshot = Image.open(RAW_FILENAME)
+
+        # Show it for a few seconds, then delete it
+        self.camera.stop_preview()
+        self.displayImage(snapshot)
+        time.sleep(10)
+        camera.remove_overlay(o)
+
+        return snapshot
+
+
+    def countdown(self, countdown1=5):
+        for i in range(countdown1):
+            self.camera.annotate_text = str(countdown1 - i)
+            #self.canv.delete("text")
+            #self.canv.update()
+            #self.canv.create_text(WIDTH/2 - 50, 300, text=str(countdown1 - i), font=font, tags="text")
+            #self.canv.update()
+            time.sleep(1)
+        #self.canv.delete("text")
+        #self.canv.update()
+
+
 
 def googleUpload(filen):
     #upload to picasa album
@@ -37,37 +113,6 @@ def googleUpload(filen):
     photo = client.InsertPhotoSimple(album_url, 'NoVa Snap', "", filen, content_type='image/jpeg')
 
 
-def takePicture():
-    countdown(camera)
-    camera.capture(RAW_FILENAME, resize=(WIDTH, HEIGHT))
-    snapshot = Image.open(RAW_FILENAME)
-    camera.close()
-    snapshot.save(RAW_FILENAME)
-    # Add the overlay with the padded image as the source,
-    # but the original image's dimensions
-    o = camera.add_overlay(snapshot.tobytes())
-    # By default, the overlay is in layer 0, beneath the
-    # preview (which defaults to layer 2). Here we move it above
-    # the preview
-    o.layer = 3
-
-    # Show it for a few seconds, then delete it
-    time.sleep(10)
-    camera.remove_overlay(o)
-
-    return snapshot
-
-
-def countdown(camera, countdown1=5):
-    for i in range(countdown1):
-        camera.annotate_text = str(countdown1 - i)
-        #can.delete("text")
-        #can.update()
-        #can.create_text(WIDTH/2 - 50, 300, text=str(countdown1 - i), font=font, tags="text")
-        #can.update()
-        time.sleep(1)
-    #can.delete("text")
-    #can.update()
 
 def main():
     # Authenticate using your Google Docs email address and password.
@@ -88,9 +133,12 @@ def main():
     root.geometry("%dx%d+0+0" % (WIDTH, HEIGHT))
     root.focus_set() # <-- move focus to this widget
     root.wm_attributes("-topmost", True)
+    root.wm_title("Wedding Photobooth")
 
     frame = Frame(root)
     frame.pack()
+
+    photobooth = Photobooth(root)
 
     ## add a software button in case hardware button is not available
     #interface_frame = Frame(root)
@@ -99,20 +147,11 @@ def main():
     #snap_button.pack(side=RIGHT)
     #interface_frame.pack(side=RIGHT)
 
-    ## the canvas will display the images
-    can = Canvas(root, width=WIDTH, height=HEIGHT)
-    can.create_rectangle(0, 0, WIDTH, HEIGHT, fill=TRANSCOLOUR, outline=TRANSCOLOUR)
-    can.bind("<Button-1>", takePicture)
-    can.pack()
-
     ### check button after waiting for 200 ms
     #root.after(200, check_and_snap)
-    root.wm_title("Wedding Photobooth")
-    camera.start_preview()
-    #camera.preview_alpha = 230
-    camera.preview_window = (0, 0, WIDTH, HEIGHT)
-    camera.preview_fullscreen = False
 
+    # Instead of the preview, we might write an image every half second or so
+    photobooth.loop()
     root.mainloop()
 
 
