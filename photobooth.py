@@ -2,6 +2,7 @@ import time
 import Image
 import ImageTk
 from Tkinter import *
+import picamera
 import gdata.docs.service
 import ConfigParser
 import os.path
