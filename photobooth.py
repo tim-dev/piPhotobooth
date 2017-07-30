@@ -6,6 +6,7 @@ import picamera
 import gdata.docs.service
 import ConfigParser
 import os.path
+from io import BytesIO
 
 client = gdata.docs.service.DocsService()
 
