@@ -47,7 +47,8 @@ class Photobooth:
         # Show a psuedo preview while the preview isn't going
         if not self.previewing:
             self.previewImage()
-            self.canv.after(0.1, self.start)
+            # need to sleep instead
+            self.canv.after(100, self.start)
 
     def previewImage(self):
         stream = BytesIO()
