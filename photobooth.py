@@ -31,6 +31,7 @@ config = Config()
 
 class Photobooth:
     def __init__(self, root):
+        self.root = root
         self.previewing = False
         self.camera = picamera.PiCamera()
 
@@ -42,14 +43,11 @@ class Photobooth:
         self.previewImage()
 
 
-    def loop(self):
+    def start(self):
         # Show a psuedo preview while the preview isn't going
-        while True:
-            if not self.previewing:
-                self.previewImage()
-                tk.update_idletasks()
-                tk.update()
-                time.sleep(0.1)
+        if not self.previewing:
+            self.previewImage()
+            self.canv.after(0.1, self.start)
 
     def previewImage(self):
         stream = BytesIO()
@@ -158,7 +156,7 @@ def main():
     #root.after(200, check_and_snap)
 
     # Instead of the preview, we might write an image every half second or so
-    photobooth.loop()
+    photobooth.start()
     root.mainloop()
 
 
