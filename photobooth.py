@@ -20,7 +20,6 @@ RAW_FILENAME = 'image.jpg'
 
 class Config:
     def __init__(self):
-        self.previewing = False
         self.conf = ConfigParser.ConfigParser()
         conf_filename = os.path.join("./", 'photobooth.conf')
         self.conf.read(conf_filename)
@@ -32,6 +31,7 @@ config = Config()
 
 class Photobooth:
     def __init__(self, root):
+        self.previewing = False
         self.camera = picamera.PiCamera()
 
         ## the canvas will display the images
