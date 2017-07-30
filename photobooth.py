@@ -51,7 +51,7 @@ class Photobooth:
 
     def previewImage(self):
         stream = BytesIO()
-        self.camera.capture(stream, resize=(WIDTH, HEIGHT))
+        self.camera.capture(stream, format='jpeg', resize=(WIDTH, HEIGHT))
         # "Rewind" the stream to the beginning so we can read its content
         stream.seek(0)
         image = Image.open(stream)
