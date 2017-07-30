@@ -39,15 +39,14 @@ class Photobooth:
         self.canv = Canvas(root, width=WIDTH, height=HEIGHT)
         self.canv.bind("<Button-1>", self.takePicture)
         self.canv.pack()
-        self.previewImage()
 
 
     def start(self):
         # Show a psuedo preview while the preview isn't going
         if not self.previewing:
             self.previewImage()
-            # need to sleep instead
-            self.canv.after(100, self.start)
+        # need to sleep instead
+        self.canv.after(100, self.start)
 
     def previewImage(self):
         stream = BytesIO()
@@ -70,6 +69,9 @@ class Photobooth:
         #image_tk = ImageTk.PhotoImage(im)
 
         ## delete all canvas elements with "image" in the tag
+        if im is None:
+            return
+
         self.canv.delete("image")
         self.canv.create_image([WIDTH / 2, HEIGHT / 2],
                          image=im,
