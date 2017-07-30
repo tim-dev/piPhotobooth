@@ -47,6 +47,8 @@ class Photobooth:
         while True:
             if not self.previewing:
                 self.previewImage()
+                tk.update_idletasks()
+                tk.update()
                 time.sleep(0.1)
 
     def previewImage(self):
@@ -75,6 +77,7 @@ class Photobooth:
                           0 + y / 2],
                          image=image_tk,
                          tags="image")
+        self.canv.update()
 
 
     def takePicture(self):
