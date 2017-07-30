@@ -1,7 +1,7 @@
 import time
-from PIL import Image
+from Tkinter import Tk, Frame, Canvas
 import ImageTk
-from Tkinter import *
+import Image
 import picamera
 import gdata.docs.service
 import ConfigParser
