@@ -15,7 +15,7 @@ WIDTH = 1366
 HEIGHT = 788
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-TRANSCOLOUR = 'gray'
+TRANSCOLOUR = ''
 RAW_FILENAME = 'image.jpg'
 
 
@@ -73,12 +73,12 @@ def main():
     # Authenticate using your Google Docs email address and password.
     client.ClientLogin(config.username, config.password)
 
-    # Query the server for an Atom feed containing a list of your documents.
-    documents_feed = client.GetDocumentListFeed()
-    # Loop through the feed and extract each document entry.
-    for document_entry in documents_feed.entry:
-      # Display the title of the document on the command line.
-      print document_entry.title.text
+    ## Query the server for an Atom feed containing a list of your documents.
+    #documents_feed = client.GetDocumentListFeed()
+    ## Loop through the feed and extract each document entry.
+    #for document_entry in documents_feed.entry:
+    #  # Display the title of the document on the command line.
+    #  print document_entry.title.text
 
     ## This is a simple GUI, so we allow the root singleton to do the legwork
     root = Tk()
@@ -88,7 +88,6 @@ def main():
     root.geometry("%dx%d+0+0" % (WIDTH, HEIGHT))
     root.focus_set() # <-- move focus to this widget
     root.wm_attributes("-topmost", True)
-    root.wm_attributes("-transparentcolor", TRANSCOLOUR)
 
     frame = Frame(root)
     frame.pack()
