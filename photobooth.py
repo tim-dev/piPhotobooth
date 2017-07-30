@@ -62,22 +62,21 @@ class Photobooth:
         '''
         display image im in GUI window
         '''
-        x,y = im.size
-        x = int(x / SCALE)
-        y = int(y / SCALE)
+        #x,y = im.size
+        #x = int(x / SCALE)
+        #y = int(y / SCALE)
 
-        im = im.resize((x,y));
-        image_tk = ImageTk.PhotoImage(im)
+        #im = im.resize((x,y));
+        #image_tk = ImageTk.PhotoImage(im)
 
         ## delete all canvas elements with "image" in the tag
         self.canv.delete("image")
-        self.canv.create_image([(WIDTH + x) / 2 - x/2,
-                          0 + y / 2],
-                         image=image_tk,
+        self.canv.create_image([WIDTH / 2, HEIGHT / 2],
+                         image=im,
                          tags="image")
 
 
-    def takePicture(self):
+    def takePicture(self, event):
         self.previewing = True
         self.camera.start_preview()
         #camera.preview_alpha = 230
