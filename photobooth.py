@@ -153,7 +153,7 @@ def main():
     #root.after(200, check_and_snap)
 
     # Instead of the preview, we might write an image every half second or so
-    photobooth.start()
+    root.after(200, photobooth.start)
     root.mainloop()
 
 
