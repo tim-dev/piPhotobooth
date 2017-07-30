@@ -35,7 +35,7 @@ class Photobooth:
         ## the canvas will display the images
         self.canv = Canvas(root, width=WIDTH, height=HEIGHT)
         self.canv.create_rectangle(0, 0, WIDTH, HEIGHT) #fill=TRANSCOLOUR, outline=TRANSCOLOUR
-        self.canv.bind("<Button-1>", takePicture)
+        self.canv.bind("<Button-1>", self.takePicture)
         self.canv.pack()
         self.previewImage()
 
@@ -82,14 +82,14 @@ class Photobooth:
         self.camera.preview_fullscreen = False
 
         self.countdown()
-        camera.capture(RAW_FILENAME, resize=(WIDTH, HEIGHT))
+        self.camera.capture(RAW_FILENAME, resize=(WIDTH, HEIGHT))
         snapshot = Image.open(RAW_FILENAME)
 
         # Show it for a few seconds, then delete it
         self.camera.stop_preview()
         self.displayImage(snapshot)
         time.sleep(10)
-        camera.remove_overlay(o)
+        self.camera.remove_overlay(o)
 
         return snapshot
 
